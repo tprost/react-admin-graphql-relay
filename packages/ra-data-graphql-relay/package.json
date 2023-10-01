@@ -1,7 +1,7 @@
 {
-    "name": "ra-data-graphql-simple",
+    "name": "ra-data-graphql-relay",
     "version": "4.14.3",
-    "description": "A GraphQL simple data provider for react-admin",
+    "description": "A GraphQL data provider for react-admin based on Relay common practices",
     "main": "dist/cjs/index.js",
     "module": "dist/esm/index.js",
     "types": "dist/cjs/index.d.ts",
@@ -34,7 +34,6 @@
     },
     "dependencies": {
         "@apollo/client": "^3.3.19",
-        "graphql-ast-types-browser": "~1.0.2",
         "lodash": "~4.17.5",
         "pluralize": "~7.0.0",
         "ra-data-graphql": "^4.14.3"

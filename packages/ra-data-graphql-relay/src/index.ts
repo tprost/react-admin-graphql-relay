@@ -1,10 +1,35 @@
 import merge from 'lodash/merge';
 import buildDataProvider, { BuildQueryFactory, Options } from 'ra-data-graphql';
 import { DataProvider, Identifier } from 'ra-core';
+import pluralize from 'pluralize';
+import {
+    DataProvider,
+    HttpError,
+    GET_LIST,
+    GET_ONE,
+    GET_MANY,
+    GET_MANY_REFERENCE,
+    CREATE,
+    UPDATE,
+    DELETE,
+    DELETE_MANY,
+    UPDATE_MANY,
+} from 'ra-core';
 
 import defaultBuildQuery from './buildQuery';
 const defaultOptions = {
     buildQuery: defaultBuildQuery,
+    introspection: {
+        operationNames: {
+            [GET_LIST]: resource => `${pluralize(resource.name).decapitalize()}`,
+            [GET_ONE]: resource => `${resource.name}.decapitalize()`,
+            [GET_MANY]: resource => `all${pluralize(resource.name)}`,
+            [GET_MANY_REFERENCE]: resource => `all${pluralize(resource.name)}`,
+            [CREATE]: resource => `create${resource.name}`,
+            [UPDATE]: resource => `update${resource.name}`,
+            [DELETE]: resource => `delete${resource.name}`,
+        },
+    }
 };
 
 export const buildQuery = defaultBuildQuery;

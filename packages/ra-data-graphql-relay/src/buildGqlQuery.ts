@@ -28,7 +28,9 @@ export default (introspectionResults: IntrospectionResult) => (
     variables: any
 ) => {
     const { page, perPage, sortField, sortOrder, ...metaVariables } = variables;
+
     let variables = {
+        id: variables.id,
         last: perPage,
         first: page * perPage + perPage,
     }

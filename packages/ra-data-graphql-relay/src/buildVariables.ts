@@ -183,11 +183,16 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
     params: any
 ) => {
     let variables: Partial<{
-        filter: { [key: string]: any };
-        page: number;
-        perPage: number;
-        sortField: string;
-        sortOrder: string;
+        // filter: { [key: string]: any };
+        // page: number;
+        // perPage: number;
+        // sortField: string;
+        // sortOrder: string;
+        first: number;
+        last: number;
+        after: string;
+        before: string;
+        
     }> = { filter: {} };
     if (params.filter) {
         variables.filter = Object.keys(params.filter).reduce((acc, key) => {
@@ -278,6 +283,8 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
     if (params.pagination) {
         variables.page = parseInt(params.pagination.page, 10) - 1;
         variables.perPage = parseInt(params.pagination.perPage, 10);
+        variables.last = variables.perPage;
+        variables.first = variables.page * variables.perPage + variables.perPage;
     }
 
     if (params.sort) {

@@ -16,8 +16,8 @@ export default (_introspectionResults: IntrospectionResult) => (
         raFetchMethod === GET_MANY_REFERENCE
     ) {
         return {
-            data: response.data.items.map(sanitizeResource),
-            total: response.data.total.count,
+            data: response.data.items.items.map(sanitizeResource),
+            total: response.data.items.totalCount,
         };
     }
 

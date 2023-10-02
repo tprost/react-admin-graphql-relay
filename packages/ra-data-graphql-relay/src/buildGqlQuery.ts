@@ -27,14 +27,51 @@ export default (introspectionResults: IntrospectionResult) => (
     queryType: IntrospectionField,
     variables: any
 ) => {
-    const { sortField, sortOrder, ...metaVariables } = variables;
+    const { page, perPage, sortField, sortOrder, ...metaVariables } = variables;
+    let variables = {
+        last: perPage,
+        first: page * perPage + perPage,
+    }
     const apolloArgs = buildApolloArgs(queryType, variables);
     const args = buildArgs(queryType, variables);
     const metaArgs = buildArgs(queryType, metaVariables);
     const fields = buildFields(introspectionResults)(resource.type.fields);
 
     if (
-        raFetchMethod === GET_LIST ||
+        raFetchMethod === GET_LIST    
+    ) {
+        return gqlTypes.document([
+            gqlTypes.operationDefinition(
+                'query',
+                gqlTypes.selectionSet([
+                    gqlTypes.field(
+                      gqlTypes.name(queryType.name),
+                      gqlTypes.name('items'),
+                      args,
+                      null,
+                      gqlTypes.selectionSet([
+                        gqlTypes.field(
+                            gqlTypes.name('nodes'),
+                            gqlTypes.name('items'),
+                            null,
+                            null,
+                            gqlTypes.selectionSet(fields)),
+                        gqlTypes.field(
+                            gqlTypes.name('totalCount'),
+                            gqlTypes.name('totalCount'),
+                            null,
+                            null,
+                            null)
+                      ]))
+                ]),
+                gqlTypes.name(queryType.name),
+                apolloArgs
+            ),
+        ]);
+
+    }
+
+    if (
         raFetchMethod === GET_MANY ||
         raFetchMethod === GET_MANY_REFERENCE
     ) {
@@ -187,6 +224,16 @@ export const buildFragments = (introspectionResults: IntrospectionResult) => (
         ];
     }, []);
 
+// export const buildConnectionArgs = (
+//     query: IntrospectionField,
+//     variables: any
+// ): ArgumentNode[] => {
+
+//     let args = [gqlTypes.argument(gqlTypes.name('first'), gqlTypes.variable(10))];
+
+//     return args;
+// };
+
 export const buildArgs = (
     query: IntrospectionField,
     variables: any
@@ -218,6 +265,7 @@ export const buildApolloArgs = (
     query: IntrospectionField,
     variables: any
 ): VariableDefinitionNode[] => {
+
     if (query.args.length === 0) {
         return [];
     }

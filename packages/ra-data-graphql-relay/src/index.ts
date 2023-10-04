@@ -33,9 +33,9 @@ const defaultOptions = {
             [GET_ONE]: resource => `${decapitalize(resource.name)}`,
             [GET_MANY]: resource => `all${pluralize(resource.name)}`,
             [GET_MANY_REFERENCE]: resource => `all${pluralize(resource.name)}`,
-            [CREATE]: resource => `create${resource.name}`,
-            [UPDATE]: resource => `update${resource.name}`,
-            [DELETE]: resource => `delete${resource.name}`,
+            [CREATE]: resource => `${decapitalize(resource.name)}Create`,
+            [UPDATE]: resource => `${decapitalize(resource.name)}Update`,
+            [DELETE]: resource => `${decapitalize(resource.name)}Delete`,
         },
     }
 };

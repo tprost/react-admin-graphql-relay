@@ -19,6 +19,7 @@ import { IntrospectionResult, IntrospectedResource } from 'ra-data-graphql';
 
 import getFinalType from './getFinalType';
 import isList from './isList';
+import omitDeep from 'omit-deep';
 
 export default (introspectionResults: IntrospectionResult) => (
     resource: IntrospectedResource,
@@ -300,35 +301,45 @@ const buildCreateUpdateVariables = (
     raFetchMethod,
     { id, data }: any,
     queryType: IntrospectionField
-) =>
-    Object.keys(data).reduce(
-        (acc, key) => {
-            if (Array.isArray(data[key])) {
-                const arg = queryType.args.find(a => a.name === `${key}Ids`);
+) => {
+  return {
+    input: omitDeep(Object.keys(data).reduce(
+            (acc, key) => {
 
-                if (arg) {
-                    return {
-                        ...acc,
-                        [`${key}Ids`]: data[key].map(({ id }) => id),
-                    };
+                if (key == 'id') {
+                    return acc;
                 }
-            }
+                
+                if (Array.isArray(data[key])) {
+                    const arg = queryType.args.find(a => a.name === `${key}Ids`);
 
-            if (typeof data[key] === 'object') {
-                const arg = queryType.args.find(a => a.name === `${key}Id`);
-
-                if (arg) {
-                    return {
-                        ...acc,
-                        [`${key}Id`]: data[key].id,
-                    };
+                    if (arg) {
+                        return {
+                            ...acc,
+                            [`${key}Ids`]: data[key].map(({ id }) => id),
+                        };
+                    }
                 }
-            }
 
-            return {
-                ...acc,
-                [key]: data[key],
-            };
-        },
-        { id }
-    );
+                if (typeof data[key] === 'object') {
+                    
+                    const arg = queryType.args.find(a => a.name === `${key}Id`);
+
+                    if (arg) {
+                        return {
+                            ...acc,
+                            [`${key}Id`]: data[key].id,
+                        };
+                    }
+                    // return acc;
+                }
+
+                return {
+                    ...acc,
+                    [key]: data[key],
+                };
+            },
+            { }), ['__typename']),
+        id
+    }
+}    

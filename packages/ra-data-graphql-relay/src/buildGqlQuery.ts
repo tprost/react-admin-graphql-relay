@@ -40,7 +40,6 @@ export default (introspectionResults: IntrospectionResult) => (
     const metaArgs = buildArgs(queryType, metaVariables);
     const fields = buildFields(introspectionResults)(resource.type.fields);
 
-    debugger;
     if (
         raFetchMethod === GET_LIST    
     ) {
